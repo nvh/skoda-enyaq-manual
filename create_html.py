@@ -110,6 +110,10 @@ def process_source_html(html_content):
     # Re-add important classes
     html = re.sub(r'<p><strong>([^<]+)</strong></p>', r'<p class="sub-header"><strong>\1</strong></p>', html)
 
+    # Remove empty/broken links but keep their text content
+    html = re.sub(r'<a[^>]*href="#"[^>]*>([^<]*)</a>', r'\1', html)
+    html = re.sub(r'<a[^>]*href="#"[^>]*>(.*?)</a>', r'\1', html, flags=re.DOTALL)
+
     return html
 
 
