@@ -1,0 +1,18 @@
+# Cookies (sensitive)
+cookies.txt
+
+# Downloaded manual data (large, HTML has everything embedded)
+manual_output/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Claude
+.claude/
