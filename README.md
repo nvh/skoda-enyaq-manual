@@ -20,8 +20,13 @@ Offline HTML version of the Škoda Enyaq digital manual with all images embedded
 
 Downloads all topics and images from the Škoda digital manual API.
 
+**Setup:**
+1. Go to https://www.skoda.nl/service/instructieboekjes
+2. Enter your VIN code and select a language
+3. Open Developer Console → Network tab
+4. Copy cookies from any request and save to `cookies.txt`
+
 ```bash
-# Requires cookies.txt with valid session cookies
 python3 download_manual.py
 
 # Create combined markdown file
