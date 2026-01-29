@@ -6,44 +6,23 @@ and embedded images. Preserves original HTML structure.
 
 import json
 import re
-import base64
 from pathlib import Path
-from html.parser import HTMLParser
 
 OUTPUT_DIR = Path("manual_output")
 IMAGES_DIR = OUTPUT_DIR / "images"
 HTML_FILE = OUTPUT_DIR / "manual.html"
 
 
-def get_image_as_base64(img_path):
-    """Convert image to base64 data URI"""
+def check_image_exists(img_path):
+    """Check if local image exists"""
     try:
-        if img_path.startswith("../"):
-            clean_path = re.sub(r'^(\.\./)+', '', img_path)
-            full_path = OUTPUT_DIR / clean_path
-        elif img_path.startswith("images/"):
+        if img_path.startswith("images/"):
             full_path = OUTPUT_DIR / img_path
         else:
             full_path = Path(img_path)
-
-        if not full_path.exists():
-            return None
-
-        content = full_path.read_bytes()
-        suffix = full_path.suffix.lower()
-        mime_types = {
-            '.png': 'image/png',
-            '.jpg': 'image/jpeg',
-            '.jpeg': 'image/jpeg',
-            '.gif': 'image/gif',
-            '.svg': 'image/svg+xml',
-            '.webp': 'image/webp'
-        }
-        mime = mime_types.get(suffix, 'image/png')
-        b64 = base64.b64encode(content).decode('utf-8')
-        return f"data:{mime};base64,{b64}"
-    except Exception as e:
-        return None
+        return full_path.exists()
+    except:
+        return False
 
 
 def url_to_local_path(url):
@@ -118,7 +97,7 @@ def process_source_html(html_content):
 
 
 def embed_images_in_html(html_content):
-    """Replace image URLs with embedded base64 data"""
+    """Replace image URLs with local paths"""
 
     def replace_img(match):
         full_tag = match.group(0)
@@ -140,12 +119,10 @@ def embed_images_in_html(html_content):
         else:
             style = 'max-width: 100%; height: auto;'
 
-        # Try to get local path and embed
+        # Try to get local path
         local_path = url_to_local_path(src)
-        if local_path:
-            data_uri = get_image_as_base64(local_path)
-            if data_uri:
-                return f'<img src="{data_uri}" style="{style}">'
+        if local_path and check_image_exists(local_path):
+            return f'<img src="{local_path}" style="{style}">'
 
         # Fallback to original URL
         return f'<img src="{src}" style="{style}">'
